@@ -599,3 +599,4 @@ input[type='date']::-webkit-date-and-time-value { text-align: left; }
   .sub:hover { background: transparent; }
   .sub:active { background: var(--surface-2); }
 }
+.logo-stack .avatar i { display: none; }
