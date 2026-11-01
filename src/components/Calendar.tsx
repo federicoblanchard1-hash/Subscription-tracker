@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Icon } from './Icon';
-import { categoryColor, money, occurrencesBetween, toISO, today, type Subscription } from '../lib';
+import { categoryColor, charge, money, occurrencesBetween, toISO, today, type Subscription } from '../lib';
 
 export function Calendar({ subs, currency, onOpen }: { subs: Subscription[]; currency: string; onOpen: (s: Subscription) => void }) {
   const t = today();
@@ -17,7 +17,7 @@ export function Calendar({ subs, currency, onOpen }: { subs: Subscription[]; cur
       for (const d of occurrencesBetween(s, first, last)) {
         const k = toISO(d);
         byDay.set(k, [...(byDay.get(k) ?? []), s]);
-        total += s.price;
+        total += charge(s);
       }
     }
     const lead = (first.getDay() + 6) % 7; // Monday first
@@ -25,7 +25,7 @@ export function Calendar({ subs, currency, onOpen }: { subs: Subscription[]; cur
     for (let d = 1; d <= last.getDate(); d++) cells.push(new Date(first.getFullYear(), first.getMonth(), d));
     while (cells.length % 7) cells.push(null);
     return { cells, byDay, total };
-  }, [subs, cursor]);
+  }, [subs, cursor, currency]);
 
   const move = (n: number) => { setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + n, 1)); setSelected(null); };
   const todayKey = toISO(t);
@@ -74,7 +74,7 @@ export function Calendar({ subs, currency, onOpen }: { subs: Subscription[]; cur
               <button onClick={() => onOpen(s)}>
                 <span className="dot" style={{ background: categoryColor(s.category) }} />
                 <span className="grow">{s.name}</span>
-                <span className="num">{money(s.price, currency)}</span>
+                <span className="num">{money(charge(s), currency)}</span>
               </button>
             </li>
           ))}

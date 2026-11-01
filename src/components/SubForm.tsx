@@ -4,7 +4,7 @@ import { Icon } from './Icon';
 import { Logo } from './Logo';
 import { domainFromUrl, matchService, searchServices, type Service } from '../logos';
 import {
-  CATEGORIES, CYCLES, categoryColor, money, monthly, nextRenewal, relativeDay, shortDate, toISO, today, uid, yearly,
+  CATEGORIES, CURRENCIES, CYCLES, categoryColor, hasRate, money, monthly, nextRenewal, relativeDay, shortDate, toISO, today, uid, yearly,
   type Cycle, type Status, type Subscription,
 } from '../lib';
 
@@ -25,6 +25,8 @@ export function SubForm({ initial, currency, onSave, onDelete, onClose }: Props)
   const [status, setStatus] = useState<Status>(initial?.status ?? 'active');
   const [url, setUrl] = useState(initial?.url ?? '');
   const [notes, setNotes] = useState(initial?.notes ?? '');
+  const [subCur, setSubCur] = useState(initial?.currency ?? currency);
+  const [split, setSplit] = useState(initial?.splitWith ?? 1);
   const [touched, setTouched] = useState(false);
   const [catTouched, setCatTouched] = useState(!!initial);
   const matched = useMemo(() => matchService(name), [name]);
@@ -35,9 +37,10 @@ export function SubForm({ initial, currency, onSave, onDelete, onClose }: Props)
 
   const preview = useMemo(() => {
     if (!valid) return null;
-    const s = { price: priceNum, cycle, startDate } as Subscription;
+    const s = { price: priceNum, cycle, startDate, currency: subCur, splitWith: split } as Subscription;
     return { m: monthly(s), y: yearly(s), next: nextRenewal(s) };
-  }, [valid, priceNum, cycle, startDate]);
+  }, [valid, priceNum, cycle, startDate, subCur, split]);
+  const foreign = subCur !== currency;
 
   const suggestions = useMemo(() => (initial || matched ? [] : searchServices(name, 5)), [name, initial, matched]);
 
@@ -68,6 +71,8 @@ export function SubForm({ initial, currency, onSave, onDelete, onClose }: Props)
       status,
       url: url.trim() || undefined,
       notes: notes.trim() || undefined,
+      currency: subCur !== currency ? subCur : undefined,
+      splitWith: split > 1 ? split : undefined,
     });
   };
 
@@ -113,7 +118,9 @@ export function SubForm({ initial, currency, onSave, onDelete, onClose }: Props)
             <label htmlFor="f-price">Price</label>
             <div className="input-affix">
               <input id="f-price" inputMode="decimal" enterKeyHint="done" value={price} onChange={(e) => setPrice(e.target.value.replace(/[^0-9.,]/g, ''))} placeholder="0.00" aria-invalid={touched && !(priceNum >= 0)} />
-              <span className="affix">{currency}</span>
+              <select className="affix-select" value={subCur} onChange={(e) => setSubCur(e.target.value)} aria-label="Currency this is billed in">
+                {(CURRENCIES.includes(subCur) ? CURRENCIES : [subCur, ...CURRENCIES]).map((c) => <option key={c}>{c}</option>)}
+              </select>
             </div>
             {touched && !(priceNum >= 0) && <p className="err">Enter an amount.</p>}
           </div>
@@ -134,10 +141,24 @@ export function SubForm({ initial, currency, onSave, onDelete, onClose }: Props)
           </div>
         </div>
 
+        <div className="field">
+          <span className="label">Split the cost <span className="muted">— family or shared plan</span></span>
+          <div className="split">
+            <div className="stepper" role="group" aria-label="People sharing the cost">
+              <button type="button" onClick={() => setSplit(Math.max(1, split - 1))} disabled={split <= 1} aria-label="Fewer people">−</button>
+              <span className="num" aria-live="polite">{split}</span>
+              <button type="button" onClick={() => setSplit(Math.min(20, split + 1))} disabled={split >= 20} aria-label="More people">+</button>
+            </div>
+            <span className="small muted">
+              {split === 1 ? 'Just you' : <>You + {split - 1} other{split > 2 ? 's' : ''}{valid && <> · your share <strong className="fg num">{money(priceNum / split, subCur)}</strong></>}</>}
+            </span>
+          </div>
+        </div>
+
         {preview && (
           <div className="preview">
-            <div><span className="muted">Per month</span><strong className="num">{money(preview.m, currency)}</strong></div>
-            <div><span className="muted">Per year</span><strong className="num">{money(preview.y, currency)}</strong></div>
+            <div><span className="muted">{split > 1 ? 'Your share / mo' : 'Per month'}{foreign && ` (${currency})`}</span><strong className="num">{foreign && !hasRate(subCur, currency) ? '—' : money(preview.m, currency)}</strong></div>
+            <div><span className="muted">{split > 1 ? 'Your share / yr' : 'Per year'}</span><strong className="num">{foreign && !hasRate(subCur, currency) ? '—' : money(preview.y, currency)}</strong></div>
             <div><span className="muted">Next charge</span><strong>{shortDate(preview.next)} <span className="muted small">· {relativeDay(preview.next)}</span></strong></div>
           </div>
         )}

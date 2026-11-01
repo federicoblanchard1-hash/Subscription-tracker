@@ -5,12 +5,14 @@ import { SettingsModal } from './components/SettingsModal';
 import { Calendar } from './components/Calendar';
 import { Logo } from './components/Logo';
 import { SwipeRow } from './components/SwipeRow';
+import { Forecast } from './components/Forecast';
+import { HeadsUp } from './components/HeadsUp';
 import { AuthModal, AuthScreen, NewPasswordModal } from './components/Auth';
 import { supabase } from './supabase';
 import { useAuth, useData, type SyncState } from './store';
 import { domainFor } from './logos';
 import {
-  CATEGORIES, CYCLES, categoryColor, chargesSoFar, daysBetween, loadSubs, money, monthly, nextRenewal,
+  CATEGORIES, CYCLES, refreshRates, setMainCurrency, billed, categoryColor, charge, chargesSoFar, splitOf, daysBetween, loadSubs, money, monthly, nextRenewal,
   relativeDay, sampleData, shortDate, today, yearly, type Settings, type Status, type Subscription,
 } from './lib';
 
@@ -49,6 +51,9 @@ export default function App() {
   };
 
   const cur = settings.currency;
+  setMainCurrency(cur);
+  const [fxv, setFxv] = useState(0);
+  useEffect(() => { refreshRates().then((changed) => changed && setFxv((v) => v + 1)); }, []);
   const view = settings.view;
   const per = (s: Subscription) => (view === 'month' ? monthly(s) : yearly(s));
   const unit = view === 'month' ? '/ mo' : '/ yr';
@@ -68,7 +73,7 @@ export default function App() {
     const m = active.reduce((a, s) => a + monthly(s), 0);
     const afterTrials = m + trials.reduce((a, s) => a + monthly(s), 0);
     const saved = paused.reduce((a, s) => a + monthly(s), 0);
-    const paid = active.reduce((a, s) => a + chargesSoFar(s) * s.price, 0);
+    const paid = active.reduce((a, s) => a + chargesSoFar(s) * charge(s), 0);
     const upcoming = subs
       .filter((s) => s.status !== 'paused')
       .map((s) => ({ s, d: nextRenewal(s) }))
@@ -80,7 +85,7 @@ export default function App() {
     const priciest = [...active].sort((a, b) => monthly(b) - monthly(a))[0];
     return { active, trials, paused, m, afterTrials, saved, paid, upcoming, next30, cats, priciest };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [subs, t.getTime()]);
+  }, [subs, t.getTime(), cur, fxv]);
 
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -95,7 +100,7 @@ export default function App() {
         if (sort === 'price') return monthly(b.s) - monthly(a.s);
         return rank[a.s.status] - rank[b.s.status] || a.next.getTime() - b.next.getTime();
       });
-  }, [subs, query, sort, filter, category]);
+  }, [subs, query, sort, filter, category, cur, fxv]);
 
   /* ---------- actions ---------- */
   const save = (s: Subscription) => {
@@ -202,6 +207,12 @@ subs.length === 0 ? (
       ) : (
         <main>
           {/* ---------- summary ---------- */}
+          <HeadsUp
+            subs={subs}
+            onKeep={(s) => { setSubs((prev) => prev.map((x) => (x.id === s.id ? { ...x, status: 'active' } : x))); notify(`Keeping ${s.name}`); }}
+            onCancelled={remove}
+          />
+
           <section className="summary">
             <div className="hero">
               <div className="hero-top">
@@ -244,7 +255,7 @@ subs.length === 0 ? (
               <Stat
                 label="Next charge"
                 value={next ? next.s.name : '—'}
-                hint={next ? `${money(next.s.price, cur)} · ${relativeDay(next.d)}` : 'Nothing scheduled'}
+                hint={next ? `${money(charge(next.s), cur)} · ${relativeDay(next.d)}` : 'Nothing scheduled'}
                 tone={next && daysBetween(t, next.d) <= 2 ? 'amber' : undefined}
               />
               <Stat label="Paid to date" value={money(stats.paid, cur, { compact: stats.paid > 9999 })} hint="Across active subscriptions" />
@@ -311,7 +322,7 @@ subs.length === 0 ? (
                               {s.notes && <span className="sub-note" title={s.notes}>{s.notes.replace(/\s+/g, ' ')}</span>}
                             </span>
                             <span className="sub-meta">
-                              {s.category} · {money(s.price, cur)} {CYCLES.find((c) => c.id === s.cycle)!.label.toLowerCase()}
+                              {s.category} · {billed(s)} {CYCLES.find((c) => c.id === s.cycle)!.label.toLowerCase()}{splitOf(s) > 1 && <> · split {splitOf(s)} ways</>}
                             </span>
                           </span>
                           <span className="sub-when">
@@ -357,7 +368,7 @@ subs.length === 0 ? (
               <section className="card">
                 <div className="card-head">
                   <h3>Next 30 days</h3>
-                  <span className="muted small num">{money(stats.next30.reduce((a, u) => a + u.s.price, 0), cur)}</span>
+                  <span className="muted small num">{money(stats.next30.reduce((a, u) => a + charge(u.s), 0), cur)}</span>
                 </div>
                 {stats.next30.length === 0 ? (
                   <p className="muted small">Nothing renews in the next 30 days.</p>
@@ -374,7 +385,7 @@ subs.length === 0 ? (
                             <span className="tl-name">{s.name}</span>
                             <span className={`small ${daysBetween(t, d) <= 3 ? 'tone-amber' : 'muted'}`}>{s.status === 'trial' ? 'Trial ends · ' : ''}{relativeDay(d)}</span>
                           </span>
-                          <span className="num">{money(s.price, cur)}</span>
+                          <span className="num">{money(charge(s), cur)}</span>
                         </button>
                       </li>
                     ))}
@@ -382,6 +393,8 @@ subs.length === 0 ? (
                   </ol>
                 )}
               </section>
+
+              <Forecast key={`fc${fxv}`} subs={subs} currency={cur} />
 
               {stats.cats.length > 0 && (
                 <section className="card">
@@ -409,7 +422,7 @@ subs.length === 0 ? (
                 </section>
               )}
 
-              <Calendar subs={subs} currency={cur} onOpen={(s) => setEditing(s)} />
+              <Calendar key={`cal${fxv}`} subs={subs} currency={cur} onOpen={(s) => setEditing(s)} />
             </aside>
           </div>
         </main>

@@ -39,6 +39,8 @@ interface Row {
   status: Subscription['status'];
   url: string | null;
   notes: string | null;
+  currency: string | null;
+  split_with: number;
   created_at: string;
 }
 
@@ -53,6 +55,8 @@ const toRow = (s: Subscription, userId: string): Row => ({
   status: s.status,
   url: s.url ?? null,
   notes: s.notes ?? null,
+  currency: s.currency ?? null,
+  split_with: Math.max(1, Math.round(s.splitWith ?? 1)),
   created_at: new Date(s.createdAt || Date.now()).toISOString(),
 });
 
@@ -66,10 +70,12 @@ const fromRow = (r: Row): Subscription => ({
   status: r.status,
   url: r.url ?? undefined,
   notes: r.notes ?? undefined,
+  currency: r.currency ?? undefined,
+  splitWith: r.split_with > 1 ? r.split_with : undefined,
   createdAt: Date.parse(r.created_at) || Date.now(),
 });
 
-const sig = (s: Subscription) => JSON.stringify([s.name, s.price, s.cycle, s.startDate, s.category, s.status, s.url ?? '', s.notes ?? '']);
+const sig = (s: Subscription) => JSON.stringify([s.name, s.price, s.cycle, s.startDate, s.category, s.status, s.url ?? '', s.notes ?? '', s.currency ?? '', s.splitWith ?? 1]);
 const settingsSig = (s: Settings) => JSON.stringify([s.currency, s.budget, s.view]);
 
 /* ---------- data ---------- */
