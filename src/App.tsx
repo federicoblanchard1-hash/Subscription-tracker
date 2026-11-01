@@ -308,6 +308,7 @@ subs.length === 0 ? (
                               {s.name}
                               {s.status === 'trial' && <span className="badge amber">Trial</span>}
                               {s.status === 'paused' && <span className="badge">Paused</span>}
+                              {s.notes && <span className="sub-note" title={s.notes}>{s.notes.replace(/\s+/g, ' ')}</span>}
                             </span>
                             <span className="sub-meta">
                               {s.category} · {money(s.price, cur)} {CYCLES.find((c) => c.id === s.cycle)!.label.toLowerCase()}
