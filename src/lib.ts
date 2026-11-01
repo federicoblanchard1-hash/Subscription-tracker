@@ -31,15 +31,30 @@ export const CYCLES: { id: Cycle; label: string; short: string }[] = [
 export const CATEGORIES: { id: string; color: string }[] = [
   { id: 'Entertainment', color: '#ef4444' },
   { id: 'Music', color: '#ec4899' },
-  { id: 'Productivity', color: '#3b82f6' },
-  { id: 'Software', color: '#8b5cf6' },
-  { id: 'Cloud & storage', color: '#06b6d4' },
+  { id: 'Podcasts & audiobooks', color: '#f472b6' },
   { id: 'News & reading', color: '#f97316' },
-  { id: 'Health & fitness', color: '#22c55e' },
   { id: 'Gaming', color: '#a855f7' },
-  { id: 'Education', color: '#eab308' },
+  { id: 'Social & dating', color: '#e11d48' },
+  { id: 'Productivity', color: '#3b82f6' },
+  { id: 'AI tools', color: '#6366f1' },
+  { id: 'Software', color: '#8b5cf6' },
+  { id: 'Developer tools', color: '#0ea5e9' },
+  { id: 'Design & creative', color: '#d946ef' },
+  { id: 'Cloud & storage', color: '#06b6d4' },
+  { id: 'Security & VPN', color: '#64748b' },
+  { id: 'Phone & internet', color: '#0284c7' },
   { id: 'Utilities', color: '#14b8a6' },
+  { id: 'Housing', color: '#78716c' },
+  { id: 'Insurance', color: '#475569' },
   { id: 'Finance', color: '#84cc16' },
+  { id: 'Shopping & memberships', color: '#f59e0b' },
+  { id: 'Food & delivery', color: '#ea580c' },
+  { id: 'Transport', color: '#0d9488' },
+  { id: 'Health & fitness', color: '#22c55e' },
+  { id: 'Education', color: '#eab308' },
+  { id: 'Kids & family', color: '#fb7185' },
+  { id: 'Pets', color: '#a16207' },
+  { id: 'Charity & donations', color: '#10b981' },
   { id: 'Other', color: '#a3a3a3' },
 ];
 
@@ -47,27 +62,6 @@ export const categoryColor = (c: string) =>
   CATEGORIES.find((x) => x.id === c)?.color ?? '#a3a3a3';
 
 export const CURRENCIES = ['EUR', 'USD', 'GBP', 'CHF', 'CAD', 'AUD', 'JPY', 'SEK', 'NOK', 'DKK', 'PLN', 'BRL', 'MXN', 'INR'];
-
-export const PRESETS: { name: string; category: string; cycle: Cycle }[] = [
-  { name: 'Netflix', category: 'Entertainment', cycle: 'monthly' },
-  { name: 'Spotify', category: 'Music', cycle: 'monthly' },
-  { name: 'YouTube Premium', category: 'Entertainment', cycle: 'monthly' },
-  { name: 'Disney+', category: 'Entertainment', cycle: 'monthly' },
-  { name: 'Apple Music', category: 'Music', cycle: 'monthly' },
-  { name: 'iCloud+', category: 'Cloud & storage', cycle: 'monthly' },
-  { name: 'Google One', category: 'Cloud & storage', cycle: 'monthly' },
-  { name: 'Amazon Prime', category: 'Entertainment', cycle: 'yearly' },
-  { name: 'ChatGPT Plus', category: 'Productivity', cycle: 'monthly' },
-  { name: 'Claude Pro', category: 'Productivity', cycle: 'monthly' },
-  { name: 'Notion', category: 'Productivity', cycle: 'monthly' },
-  { name: 'Figma', category: 'Software', cycle: 'monthly' },
-  { name: 'Adobe Creative Cloud', category: 'Software', cycle: 'monthly' },
-  { name: 'GitHub Copilot', category: 'Software', cycle: 'monthly' },
-  { name: 'Xbox Game Pass', category: 'Gaming', cycle: 'monthly' },
-  { name: 'PlayStation Plus', category: 'Gaming', cycle: 'yearly' },
-  { name: 'Duolingo', category: 'Education', cycle: 'yearly' },
-  { name: 'Gym', category: 'Health & fitness', cycle: 'monthly' },
-];
 
 /* ---------- dates ---------- */
 
@@ -187,18 +181,20 @@ function guessCurrency(): string {
   }
 }
 
-export function loadSubs(): Subscription[] {
+const subsKey = (scope: string) => (scope === 'guest' ? KEY : `${KEY}:${scope}`);
+
+export function loadSubs(scope = 'guest'): Subscription[] {
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = localStorage.getItem(subsKey(scope));
     const v = raw ? JSON.parse(raw) : [];
     return Array.isArray(v) ? v.filter(isSub) : [];
   } catch {
     return [];
   }
 }
-export function saveSubs(s: Subscription[]) {
+export function saveSubs(scope: string, s: Subscription[]) {
   try {
-    localStorage.setItem(KEY, JSON.stringify(s));
+    localStorage.setItem(subsKey(scope), JSON.stringify(s));
   } catch {
     /* storage unavailable */
   }
@@ -284,9 +280,9 @@ export function sampleData(): Subscription[] {
     mk({ name: 'Netflix', price: 13.49, cycle: 'monthly', startDate: ago(26, Math.min(28, t.getDate() + 3)), category: 'Entertainment', status: 'active' }),
     mk({ name: 'Spotify', price: 10.99, cycle: 'monthly', startDate: ago(40, Math.min(28, t.getDate() + 9)), category: 'Music', status: 'active' }),
     mk({ name: 'iCloud+', price: 2.99, cycle: 'monthly', startDate: ago(18, Math.min(28, t.getDate() + 1)), category: 'Cloud & storage', status: 'active' }),
-    mk({ name: 'Claude Pro', price: 18, cycle: 'monthly', startDate: ago(5, Math.min(28, t.getDate() + 16)), category: 'Productivity', status: 'active' }),
-    mk({ name: 'Figma', price: 144, cycle: 'yearly', startDate: ago(9, 14), category: 'Software', status: 'active' }),
-    mk({ name: 'Amazon Prime', price: 69.9, cycle: 'yearly', startDate: ago(30, 3), category: 'Entertainment', status: 'active' }),
+    mk({ name: 'Claude Pro', price: 18, cycle: 'monthly', startDate: ago(5, Math.min(28, t.getDate() + 16)), category: 'AI tools', status: 'active' }),
+    mk({ name: 'Figma', price: 144, cycle: 'yearly', startDate: ago(9, 14), category: 'Design & creative', status: 'active' }),
+    mk({ name: 'Amazon Prime', price: 69.9, cycle: 'yearly', startDate: ago(30, 3), category: 'Shopping & memberships', status: 'active' }),
     mk({ name: 'Gym', price: 34.9, cycle: 'monthly', startDate: ago(11, 1), category: 'Health & fitness', status: 'active' }),
     mk({ name: 'Duolingo', price: 7.99, cycle: 'monthly', startDate: at(6), category: 'Education', status: 'trial', notes: 'Cancel before the trial ends if unused' }),
     mk({ name: 'Disney+', price: 8.99, cycle: 'monthly', startDate: ago(14, 20), category: 'Entertainment', status: 'paused' }),

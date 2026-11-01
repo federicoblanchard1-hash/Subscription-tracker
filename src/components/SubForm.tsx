@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react';
 import { Modal } from './Modal';
 import { Icon } from './Icon';
+import { Logo } from './Logo';
+import { domainFromUrl, matchService, searchServices, type Service } from '../logos';
 import {
-  CATEGORIES, CYCLES, PRESETS, categoryColor, money, monthly, nextRenewal, relativeDay, shortDate, toISO, today, uid, yearly,
+  CATEGORIES, CYCLES, categoryColor, money, monthly, nextRenewal, relativeDay, shortDate, toISO, today, uid, yearly,
   type Cycle, type Status, type Subscription,
 } from '../lib';
 
@@ -24,6 +26,9 @@ export function SubForm({ initial, currency, onSave, onDelete, onClose }: Props)
   const [url, setUrl] = useState(initial?.url ?? '');
   const [notes, setNotes] = useState(initial?.notes ?? '');
   const [touched, setTouched] = useState(false);
+  const [catTouched, setCatTouched] = useState(!!initial);
+  const matched = useMemo(() => matchService(name), [name]);
+  const urlDomain = domainFromUrl(url);
 
   const priceNum = parseFloat(price.replace(',', '.'));
   const valid = name.trim().length > 0 && Number.isFinite(priceNum) && priceNum >= 0 && !!startDate;
@@ -34,11 +39,19 @@ export function SubForm({ initial, currency, onSave, onDelete, onClose }: Props)
     return { m: monthly(s), y: yearly(s), next: nextRenewal(s) };
   }, [valid, priceNum, cycle, startDate]);
 
-  const suggestions = useMemo(() => {
-    const q = name.trim().toLowerCase();
-    if (initial || !q) return [];
-    return PRESETS.filter((p) => p.name.toLowerCase().includes(q) && p.name.toLowerCase() !== q).slice(0, 4);
-  }, [name, initial]);
+  const suggestions = useMemo(() => (initial || matched ? [] : searchServices(name, 5)), [name, initial, matched]);
+
+  const pick = (p: Service) => {
+    setName(p.name);
+    setCategory(p.category);
+    setCatTouched(true);
+    if (!initial) setCycle(p.cycle);
+  };
+  const onName = (v: string) => {
+    setName(v);
+    const m = matchService(v);
+    if (m && !catTouched) setCategory(m.category);
+  };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,12 +92,15 @@ export function SubForm({ initial, currency, onSave, onDelete, onClose }: Props)
       <form id="sub-form" onSubmit={submit} className="form" noValidate>
         <div className="field">
           <label htmlFor="f-name">Name</label>
-          <input id="f-name" autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Netflix" autoComplete="off" aria-invalid={touched && !name.trim()} />
+          <div className="name-input">
+            <Logo name={name} url={url} size={28} />
+            <input id="f-name" autoFocus={!('ontouchstart' in window)} value={name} onChange={(e) => onName(e.target.value)} placeholder="Netflix, Spotify, Gym…" autoComplete="off" autoCapitalize="words" enterKeyHint="next" aria-invalid={touched && !name.trim()} />
+          </div>
           {suggestions.length > 0 && (
             <div className="chips">
               {suggestions.map((p) => (
-                <button type="button" key={p.name} className="chip" onClick={() => { setName(p.name); setCategory(p.category); setCycle(p.cycle); }}>
-                  <span className="dot" style={{ background: categoryColor(p.category) }} />{p.name}
+                <button type="button" key={p.name} className="chip logo-chip" onClick={() => pick(p)}>
+                  <Logo name={p.name} size={18} />{p.name}
                 </button>
               ))}
             </div>
@@ -96,7 +112,7 @@ export function SubForm({ initial, currency, onSave, onDelete, onClose }: Props)
           <div className="field">
             <label htmlFor="f-price">Price</label>
             <div className="input-affix">
-              <input id="f-price" inputMode="decimal" value={price} onChange={(e) => setPrice(e.target.value.replace(/[^0-9.,]/g, ''))} placeholder="0.00" aria-invalid={touched && !(priceNum >= 0)} />
+              <input id="f-price" inputMode="decimal" enterKeyHint="done" value={price} onChange={(e) => setPrice(e.target.value.replace(/[^0-9.,]/g, ''))} placeholder="0.00" aria-invalid={touched && !(priceNum >= 0)} />
               <span className="affix">{currency}</span>
             </div>
             {touched && !(priceNum >= 0) && <p className="err">Enter an amount.</p>}
@@ -131,7 +147,7 @@ export function SubForm({ initial, currency, onSave, onDelete, onClose }: Props)
             <label htmlFor="f-cat">Category</label>
             <div className="select-wrap">
               <span className="dot" style={{ background: categoryColor(category) }} />
-              <select id="f-cat" value={category} onChange={(e) => setCategory(e.target.value)}>
+              <select id="f-cat" value={category} onChange={(e) => { setCategory(e.target.value); setCatTouched(true); }}>
                 {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.id}</option>)}
               </select>
             </div>
@@ -149,8 +165,12 @@ export function SubForm({ initial, currency, onSave, onDelete, onClose }: Props)
         </div>
 
         <div className="field">
-          <label htmlFor="f-url">Website <span className="muted">— optional</span></label>
-          <input id="f-url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="netflix.com/account" autoComplete="off" />
+          <label htmlFor="f-url">Website <span className="muted">— optional, sets the logo</span></label>
+          <input id="f-url" type="url" inputMode="url" autoCapitalize="none" autoCorrect="off" value={url} onChange={(e) => setUrl(e.target.value)}
+            placeholder={matched ? matched.domain : 'example.com'} autoComplete="off" />
+          {(urlDomain || matched) && (
+            <p className="hint"><Logo name={name} url={url} size={16} /> Logo from <strong>{urlDomain ?? matched!.domain}</strong>{!urlDomain && ' — detected from the name'}</p>
+          )}
         </div>
         <div className="field">
           <label htmlFor="f-notes">Notes <span className="muted">— optional</span></label>

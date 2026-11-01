@@ -3,17 +3,30 @@ import { Icon } from './components/Icon';
 import { SubForm } from './components/SubForm';
 import { SettingsModal } from './components/SettingsModal';
 import { Calendar } from './components/Calendar';
+import { Logo } from './components/Logo';
+import { AuthModal, AuthScreen, NewPasswordModal } from './components/Auth';
+import { supabase } from './supabase';
+import { useAuth, useData, type SyncState } from './store';
+import { domainFor } from './logos';
 import {
-  CATEGORIES, CYCLES, categoryColor, chargesSoFar, daysBetween, loadSettings, loadSubs, money, monthly, nextRenewal,
-  relativeDay, sampleData, saveSettings, saveSubs, shortDate, today, yearly, type Settings, type Status, type Subscription,
+  CATEGORIES, CYCLES, categoryColor, chargesSoFar, daysBetween, loadSubs, money, monthly, nextRenewal,
+  relativeDay, sampleData, shortDate, today, yearly, type Settings, type Status, type Subscription,
 } from './lib';
 
 type Sort = 'next' | 'price' | 'name';
 type Filter = 'all' | Status;
 
+const GUEST_KEY = 'recurring:guest';
+const readGuest = () => { try { return localStorage.getItem(GUEST_KEY) === '1'; } catch { return false; } };
+
 export default function App() {
-  const [subs, setSubs] = useState<Subscription[]>(loadSubs);
-  const [settings, setSettings] = useState<Settings>(loadSettings);
+  const auth = useAuth();
+  const { user } = auth;
+  const { subs, setSubs, settings, setSettings, loaded, sync, retry } = useData(user);
+  const [guest, setGuestState] = useState(readGuest);
+  const setGuest = (v: boolean) => { setGuestState(v); try { v ? localStorage.setItem(GUEST_KEY, '1') : localStorage.removeItem(GUEST_KEY); } catch { /* ignore */ } };
+  const [showAuth, setShowAuth] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [editing, setEditing] = useState<Subscription | 'new' | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [query, setQuery] = useState('');
@@ -25,8 +38,13 @@ export default function App() {
   const toastTimer = useRef<number>();
   const theme = useTheme();
 
-  useEffect(() => saveSubs(subs), [subs]);
-  useEffect(() => saveSettings(settings), [settings]);
+  useEffect(() => { if (user) { setGuest(false); setShowAuth(false); } }, [user]);
+  const signOut = async () => {
+    setMenuOpen(false);
+    setShowSettings(false);
+    await supabase?.auth.signOut();
+    notify('Signed out');
+  };
 
   const cur = settings.currency;
   const view = settings.view;
@@ -120,28 +138,64 @@ export default function App() {
   const overBudget = settings.budget != null && stats.m > settings.budget;
   const next = stats.upcoming[0];
 
+  const needsAuth = !!supabase && auth.ready && !user && !guest;
+  if (!auth.ready) return <div className="app boot" aria-busy="true"><span className="spinner lg" /></div>;
+  if (needsAuth) {
+    return (
+      <div className="app">
+        <header className="topbar"><Brand /></header>
+        <AuthScreen onGuest={() => setGuest(true)} localCount={loadSubs('guest').length} />
+        {auth.recovery && <NewPasswordModal onClose={auth.endRecovery} />}
+      </div>
+    );
+  }
+
   return (
     <div className="app">
       <header className="topbar">
-        <div className="brand">
-          <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor" /><path d="M10 16a6 6 0 1 0 6-6" fill="none" stroke="var(--bg)" strokeWidth="2.6" strokeLinecap="round" /><circle cx="16" cy="10" r="2.2" fill="#22c55e" /></svg>
-          <span>Recurring</span>
-        </div>
+        <Brand />
         <div className="row gap-8">
+          {user && <SyncBadge state={sync} onRetry={retry} />}
           <button className="icon-btn" onClick={theme.toggle} aria-label={`Switch to ${theme.dark ? 'light' : 'dark'} mode`} title="Toggle theme">
             <Icon name={theme.dark ? 'sun' : 'moon'} />
           </button>
           <button className="icon-btn" onClick={() => setShowSettings(true)} aria-label="Settings" title="Settings">
             <Icon name="settings" />
           </button>
-          <button className="btn primary" onClick={() => setEditing('new')}>
-            <Icon name="plus" /> <span className="hide-sm">Add subscription</span><span className="show-sm">Add</span>
-            <kbd className="hide-sm">N</kbd>
+          {supabase && !user && (
+            <button className="btn ghost hide-xs" onClick={() => setShowAuth(true)}>Log in</button>
+          )}
+          {user && (
+            <div className="account">
+              <button className="account-btn" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-haspopup="menu" aria-label="Account">
+                {(user.email ?? '?')[0].toUpperCase()}
+              </button>
+              {menuOpen && (
+                <>
+                  <div className="menu-scrim" onClick={() => setMenuOpen(false)} />
+                  <div className="menu" role="menu">
+                    <div className="menu-head">
+                      <span className="small muted">Signed in as</span>
+                      <strong className="menu-email">{user.email}</strong>
+                    </div>
+                    <button role="menuitem" onClick={() => { setMenuOpen(false); setShowSettings(true); }}><Icon name="settings" /> Settings & export</button>
+                    <button role="menuitem" onClick={signOut}><Icon name="logout" /> Log out</button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+          <button className="btn primary hide-sm" onClick={() => setEditing('new')}>
+            <Icon name="plus" /> Add subscription <kbd>N</kbd>
           </button>
         </div>
       </header>
 
-      {subs.length === 0 ? (
+      {!loaded ? (
+        <div className="boot" aria-busy="true"><span className="spinner lg" /></div>
+      ) : 
+
+subs.length === 0 ? (
         <Empty onAdd={() => setEditing('new')} onSample={() => { setSubs(sampleData()); notify('Loaded sample data — edit or delete freely'); }} />
       ) : (
         <main>
@@ -246,10 +300,7 @@ export default function App() {
                     return (
                       <li key={s.id} className={`sub${s.status === 'paused' ? ' paused' : ''}`}>
                         <button className="sub-main" onClick={() => setEditing(s)} aria-label={`Edit ${s.name}`}>
-                          <span className="avatar" aria-hidden="true">
-                            {initials(s.name)}
-                            <i style={{ background: categoryColor(s.category) }} />
-                          </span>
+                          <Logo name={s.name} url={s.url} category={s.category} />
                           <span className="sub-info">
                             <span className="sub-name">
                               {s.name}
@@ -271,13 +322,15 @@ export default function App() {
                             )}
                           </span>
                           <span className="sub-price">
-                            <span className="num">{money(per(s), cur)}</span>
-                            <span className="muted">{unit}</span>
+                            <span className="num">{money(per(s), cur)}<span className="muted unit"> {unit}</span></span>
+                            <span className={`sub-when-sm ${soon ? 'tone-amber' : 'muted'}`}>
+                              {s.status === 'paused' ? 'Paused' : s.status === 'trial' ? `Trial · ${relativeDay(next)}` : relativeDay(next)}
+                            </span>
                           </span>
                         </button>
                         <div className="sub-actions">
-                          {s.url && (
-                            <a className="icon-btn sm" href={s.url.startsWith('http') ? s.url : `https://${s.url}`} target="_blank" rel="noreferrer" aria-label={`Open ${s.name} website`} title="Manage on website">
+                          {domainFor(s.name, s.url) && (
+                            <a className="icon-btn sm" href={s.url ? (s.url.startsWith('http') ? s.url : `https://${s.url}`) : `https://${domainFor(s.name)}`} target="_blank" rel="noreferrer" aria-label={`Open ${s.name} website`} title="Manage on website">
                               <Icon name="link" size={14} />
                             </a>
                           )}
@@ -360,8 +413,17 @@ export default function App() {
       )}
 
       <footer className="foot muted small">
-        Stored privately in your browser · <button className="link" onClick={() => setShowSettings(true)}>Backup & export</button>
+        {user ? <>Synced to {user.email}</> : <>Stored privately in your browser{supabase && <> · <button className="link" onClick={() => setShowAuth(true)}>Log in to sync</button></>}</>}
+        {' · '}<button className="link" onClick={() => setShowSettings(true)}>Backup & export</button>
       </footer>
+
+      {loaded && subs.length > 0 && (
+        <button className="fab" onClick={() => setEditing('new')} aria-label="Add subscription">
+          <Icon name="plus" size={24} />
+        </button>
+      )}
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
+      {auth.recovery && <NewPasswordModal onClose={auth.endRecovery} />}
 
       {editing && (
         <SubForm
@@ -382,6 +444,9 @@ export default function App() {
             return [...prev.filter((p) => !ids.has(p.id)), ...incoming.map((s) => ({ ...s, category: CATEGORIES.some((c) => c.id === s.category) ? s.category : 'Other', status: s.status ?? 'active' }))];
           })}
           onClear={() => setSubs([])}
+          email={user?.email ?? null}
+          onSignOut={user ? signOut : undefined}
+          onSignIn={supabase && !user ? () => { setShowSettings(false); setShowAuth(true); } : undefined}
           onClose={() => setShowSettings(false)}
         />
       )}
@@ -430,9 +495,19 @@ function Empty({ onAdd, onSample }: { onAdd: () => void; onSample: () => void })
   );
 }
 
-function initials(name: string) {
-  const w = name.trim().split(/\s+/).filter(Boolean);
-  return ((w[0]?.[0] ?? '') + (w[1]?.[0] ?? w[0]?.[1] ?? '')).toUpperCase();
+function Brand() {
+  return (
+    <div className="brand">
+      <svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor" /><path d="M10 16a6 6 0 1 0 6-6" fill="none" stroke="var(--bg)" strokeWidth="2.6" strokeLinecap="round" /><circle cx="16" cy="10" r="2.2" fill="#22c55e" /></svg>
+      <span>Recurring</span>
+    </div>
+  );
+}
+
+function SyncBadge({ state, onRetry }: { state: SyncState; onRetry: () => void }) {
+  if (state === 'error') return <button className="sync err" onClick={onRetry} title="Retry sync"><span className="pulse red" />Not synced · Retry</button>;
+  const label = state === 'loading' ? 'Loading' : state === 'saving' ? 'Saving' : 'Synced';
+  return <span className={`sync ${state}`} title="Your subscriptions are saved to your account"><span className={`pulse ${state === 'synced' ? 'green' : 'gray'}`} /><span className="hide-xs">{label}</span></span>;
 }
 
 function useTheme() {

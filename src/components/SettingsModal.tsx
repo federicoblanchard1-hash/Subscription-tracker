@@ -10,9 +10,12 @@ interface Props {
   onImport: (subs: Subscription[]) => void;
   onClear: () => void;
   onClose: () => void;
+  email: string | null;
+  onSignOut?: () => void;
+  onSignIn?: () => void;
 }
 
-export function SettingsModal({ settings, subs, onChange, onImport, onClear, onClose }: Props) {
+export function SettingsModal({ settings, subs, onChange, onImport, onClear, onClose, email, onSignOut, onSignIn }: Props) {
   const [budget, setBudget] = useState(settings.budget != null ? String(settings.budget) : '');
   const [msg, setMsg] = useState<string | null>(null);
   const [confirmClear, setConfirmClear] = useState(false);
@@ -59,9 +62,30 @@ export function SettingsModal({ settings, subs, onChange, onImport, onClear, onC
           </div>
         </div>
 
+        {(email || onSignIn) && (
+          <div className="settings-group">
+            <span className="label">Account</span>
+            {email ? (
+              <div className="account-row">
+                <span className="account-btn static">{email[0].toUpperCase()}</span>
+                <div className="grow">
+                  <strong className="menu-email">{email}</strong>
+                  <span className="muted small block-text">Synced across your devices</span>
+                </div>
+                <button className="btn" onClick={onSignOut}><Icon name="logout" /> Log out</button>
+              </div>
+            ) : (
+              <div className="account-row">
+                <p className="muted small grow">Log in to keep your subscriptions synced between your iPhone and computer.</p>
+                <button className="btn primary" onClick={onSignIn}>Log in</button>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="settings-group">
           <span className="label">Your data</span>
-          <p className="muted small">Everything is stored in this browser only. Export a backup to move it to another device.</p>
+          <p className="muted small">{email ? 'Saved to your account. You can also download a copy.' : 'Everything is stored in this browser only. Export a backup to move it to another device.'}</p>
           <div className="btn-list">
             <button className="btn" onClick={() => download(`recurring-${stamp}.json`, JSON.stringify({ version: 1, settings, subscriptions: subs }, null, 2), 'application/json')} disabled={!subs.length}>
               <Icon name="download" /> Backup (.json)
