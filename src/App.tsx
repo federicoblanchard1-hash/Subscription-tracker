@@ -4,6 +4,7 @@ import { SubForm } from './components/SubForm';
 import { SettingsModal } from './components/SettingsModal';
 import { Calendar } from './components/Calendar';
 import { Logo } from './components/Logo';
+import { SwipeRow } from './components/SwipeRow';
 import { AuthModal, AuthScreen, NewPasswordModal } from './components/Auth';
 import { supabase } from './supabase';
 import { useAuth, useData, type SyncState } from './store';
@@ -27,6 +28,7 @@ export default function App() {
   const setGuest = (v: boolean) => { setGuestState(v); try { v ? localStorage.setItem(GUEST_KEY, '1') : localStorage.removeItem(GUEST_KEY); } catch { /* ignore */ } };
   const [showAuth, setShowAuth] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [swiped, setSwiped] = useState<string | null>(null);
   const [editing, setEditing] = useState<Subscription | 'new' | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [query, setQuery] = useState('');
@@ -298,7 +300,7 @@ subs.length === 0 ? (
                     const days = daysBetween(t, next);
                     const soon = s.status !== 'paused' && days <= 3;
                     return (
-                      <li key={s.id} className={`sub${s.status === 'paused' ? ' paused' : ''}`}>
+                      <SwipeRow key={s.id} className={`sub${s.status === 'paused' ? ' paused' : ''}`} open={swiped === s.id} onOpenChange={(o) => setSwiped(o ? s.id : null)} onDelete={() => remove(s)} onPause={() => togglePause(s)} paused={s.status === 'paused'}>
                         <button className="sub-main" onClick={() => setEditing(s)} aria-label={`Edit ${s.name}`}>
                           <Logo name={s.name} url={s.url} category={s.category} />
                           <span className="sub-info">
@@ -338,13 +340,13 @@ subs.length === 0 ? (
                             <Icon name={s.status === 'paused' ? 'play' : 'pause'} size={14} />
                           </button>
                         </div>
-                      </li>
+                      </SwipeRow>
                     );
                   })}
                 </ul>
               )}
               <div className="list-foot muted small">
-                <span>{list.length} of {subs.length}</span>
+                <span>{list.length} of {subs.length}<span className="touch-only"> · Swipe left to delete</span></span>
                 <span className="num">{money(list.filter((x) => x.s.status === 'active').reduce((a, x) => a + per(x.s), 0), cur)} {unit}</span>
               </div>
             </section>

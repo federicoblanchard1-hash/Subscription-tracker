@@ -595,8 +595,36 @@ input[type='date']::-webkit-date-and-time-value { text-align: left; }
   .foot { padding-bottom: 72px; }
 }
 @keyframes sheet { from { transform: translateY(100%); } }
-@media (hover: none) {
-  .sub:hover { background: transparent; }
-  .sub:active { background: var(--surface-2); }
-}
+
 .logo-stack .avatar i { display: none; }
+
+/* ---------- swipe to delete ---------- */
+.swipe { overflow: hidden; touch-action: pan-y; transition: opacity 0.2s; }
+.swipe.removing { opacity: 0; }
+.swipe-fg {
+  position: relative; z-index: 1;
+  background: var(--surface); border-radius: 11px;
+  transition: transform 0.28s cubic-bezier(.2,.8,.2,1), background 0.15s;
+  will-change: transform;
+}
+.swipe-fg.dragging { transition: none; }
+.sub:hover { background: transparent; }
+.sub:hover .swipe-fg { background: var(--surface-2); }
+.sub + .sub::before { z-index: 2; }
+.swipe-actions {
+  position: absolute; top: 0; right: 0; bottom: 0;
+  display: flex; justify-content: flex-end;
+  border-radius: 11px; overflow: hidden;
+}
+.swipe-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  min-width: 78px; color: #fff; font-size: 12px; font-weight: 600;
+}
+.swipe-btn.pause { background: #737373; }
+.swipe-btn.delete { background: #ef4444; flex: 1; transition: flex 0.2s; }
+.touch-only { display: none; }
+@media (hover: none) and (pointer: coarse) {
+  .touch-only { display: inline; }
+  .sub:hover .swipe-fg { background: var(--surface); }
+  .sub:active .swipe-fg { background: var(--surface-2); }
+}
