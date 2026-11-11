@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { Modal } from './Modal';
 import { Icon } from './Icon';
+import { Notifications } from './Notifications';
 import { CURRENCIES, download, isSub, toCSV, toICS, type Settings, type Subscription } from '../lib';
 
 interface Props {
@@ -82,6 +83,8 @@ export function SettingsModal({ settings, subs, onChange, onImport, onClear, onC
             )}
           </div>
         )}
+
+        {(email || onSignIn) && <Notifications signedIn={!!email} onSignIn={onSignIn} />}
 
         <div className="settings-group">
           <span className="label">Your data</span>

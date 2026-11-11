@@ -687,3 +687,16 @@ input[type='date']::-webkit-date-and-time-value { text-align: left; }
   .affix-select { font-size: 16px !important; }
   .stepper button { width: 44px; height: 42px; }
 }
+
+/* ---------- notifications ---------- */
+.notif-row { display: flex; align-items: center; gap: 12px; }
+.switch { position: relative; width: 46px; height: 28px; border-radius: 99px; background: var(--border-strong); flex: none; transition: background 0.2s; }
+.switch span { position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform 0.2s cubic-bezier(.2,.8,.2,1); }
+.switch.on { background: var(--green); }
+.switch.on span { transform: translateX(18px); }
+.switch:disabled { opacity: 0.5; }
+.self-start { align-self: flex-start; }
+.notice { padding: 12px 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); }
+.steps { margin: 8px 0 0; padding-left: 18px; list-style: decimal; display: flex; flex-direction: column; gap: 4px; }
+.share-ico { display: inline-block; font-size: 11px; padding: 0 3px; border: 1px solid var(--border-strong); border-radius: 4px; }
+.err-note { color: var(--red); }

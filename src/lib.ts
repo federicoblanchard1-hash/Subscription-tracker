@@ -341,3 +341,6 @@ export function sampleData(): Subscription[] {
     mk({ name: 'Disney+', price: 8.99, cycle: 'monthly', startDate: ago(14, 20), category: 'Entertainment', status: 'paused' }),
   ];
 }
+
+/** Locale-independent short date for server-sent messages, e.g. "Thu 12 Nov". */
+export const shortDateFor = (d: Date) => d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
