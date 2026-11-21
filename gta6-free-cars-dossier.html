@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GTA 6 Free Cars Dossier</title>
+<style>
+  :root{
+    --bg:#0d0b14; --panel:#17131f; --panel2:#1f1a2b; --line:#322a44;
+    --text:#f1ecf7; --muted:#a79fb8; --pink:#ff4fa3; --cyan:#35d6e6;
+    --green:#4ade80; --yellow:#facc15; --red:#f87171; --grey:#8b8499;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 16px 60px}
+  header{border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:22px}
+  .stamp{display:inline-block;font:700 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.18em;color:var(--pink);border:1px solid var(--pink);padding:5px 8px;border-radius:3px;text-transform:uppercase}
+  h1{font-size:clamp(28px,5vw,44px);line-height:1.1;margin:14px 0 8px;letter-spacing:-.02em}
+  h1 span{color:var(--pink)}
+  h2{font-size:20px;margin:36px 0 12px;color:var(--cyan);letter-spacing:.02em}
+  p{margin:0 0 10px} .lede{color:var(--muted);max-width:70ch}
+  .note{background:var(--panel);border-left:3px solid var(--yellow);padding:12px 14px;border-radius:4px;margin:16px 0;color:var(--muted)}
+  .note b{color:var(--text)}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+  .box{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px}
+  .box h3{margin:0 0 6px;font-size:15px}
+  .box p{color:var(--muted);font-size:14px;margin:0}
+  .pill{display:inline-block;font:700 11px/1 ui-monospace,Menlo,monospace;padding:4px 7px;border-radius:99px;letter-spacing:.04em;white-space:nowrap}
+  .t-none{background:#123222;color:var(--green)} .t-standard{background:#3a3008;color:var(--yellow)}
+  .t-advanced{background:#3d1616;color:var(--red)} .t-unknown{background:#2a2633;color:var(--grey)}
+  .c-solid{color:var(--green)} .c-single{color:var(--yellow)} .c-conflict{color:var(--red)}
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+  .filters button{background:var(--panel);color:var(--text);border:1px solid var(--line);padding:7px 12px;border-radius:99px;font:inherit;font-size:13px;cursor:pointer}
+  .filters button.on{background:var(--pink);border-color:var(--pink);color:#1a0a12;font-weight:700}
+  input[type=search]{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:8px;font:inherit}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-top:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px}
+  .card.super{border-top:3px solid var(--pink)} .card.other{border-top:3px solid var(--cyan)}
+  .card h3{margin:0;font-size:18px;line-height:1.2}
+  .sub{color:var(--muted);font-size:13px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px}
+  .tag{font-size:11px;padding:3px 7px;border-radius:4px;background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
+  dl{margin:0;display:grid;grid-template-columns:92px 1fr;gap:5px 10px;font-size:13.5px}
+  dt{color:var(--grey);font:600 11px/1.6 ui-monospace,Menlo,monospace;text-transform:uppercase;letter-spacing:.06em}
+  dd{margin:0}
+  .conf{font-size:12px;border-top:1px dashed var(--line);padding-top:8px;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--grey);font:600 11px/1.4 ui-monospace,Menlo,monospace;text-transform:uppercase;letter-spacing:.06em}
+  .scroll{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+  a{color:var(--cyan)} ul.src{padding-left:18px;color:var(--muted);font-size:13.5px;columns:2;column-gap:30px}
+  @media(max-width:640px){ul.src{columns:1}}
+  footer{margin-top:40px;color:var(--grey);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="stamp">Leonida vehicle file · compiled 21 Nov 2026</span>
+  <h1>GTA 6 — <span>Free Cars</span> Dossier</h1>
+  <p class="lede">Every supercar (and notable non-super) you can take without buying it, with where it sits, what you need to steal it, what tracker it carries, and what it costs to make it yours.</p>
+  <div class="note">
+    <b>Read this first.</b> The game came out two days ago (19 Nov 2026). All of this comes from launch-week fan guides, and they disagree with each other in places. Each card has a confidence line saying whether a detail is backed by several guides, one guide, or is disputed. Scan any car with the in-game <b>WAiNK</b> app before you commit: it shows the real tracker type and value.
+    <br><br><b>About "Paul Walker's Supra":</b> the tribute car in the game is not a Supra. It is a green <b>Maibatsu '97 Penumbra FF</b>, modelled on the 1995 Mitsubishi Eclipse from the first <i>Fast and the Furious</i>. It is the first card below.
+  </div>
+</header>
+
+<h2>How trackers decide what you can keep</h2>
+<div class="grid3">
+  <div class="box"><h3><span class="pill t-none">NO TRACKER</span></h3><p>Take it to <b>Moses</b> at Watkins Auto Parts, Port Gellhorn, after his Chapter 2 mission. Your <b>first registration with him is free</b>, so use it on the most expensive tracker-free car you can find. He has a short cooldown and refuses cars stolen close to his garage.</p></div>
+  <div class="box"><h3><span class="pill t-standard">STANDARD TRACKER</span></h3><p>Shown as a yellow light. Blocks mod shops and sales until you pay to register the car at a <b>Pay 'n' Spray</b>, which opens in Chapter 3. Whether it also calls the police is not confirmed.</p></div>
+  <div class="box"><h3><span class="pill t-advanced">ADVANCED TRACKER</span></h3><p>Shown as a red light. Reports your position to police whenever you slow down or stop. Pay 'n' Spray refuses these and the tracker cannot be removed. One report (Forbes) says <b>Randy</b> will take them later in the story; other guides say they can never be registered.</p></div>
+</div>
+<div class="grid3" style="margin-top:12px">
+  <div class="box"><h3>Tools</h3><p><b>Slim jim</b> for older cars. <b>Key Cloner</b> for modern exotics: story-locked until about halfway through Chapter 3 (mission <i>Clonin' Keys, Makin' Gs</i>).</p></div>
+  <div class="box"><h3>Fees</h3><p>"Free" means free to take. After the first Moses freebie, registering costs money: roughly $4,000–$10,000 for ordinary fast cars, and $28,000–$66,000 reported for rare standout supercars.</p></div>
+  <div class="box"><h3>Insurance</h3><p>I found no guide describing an insurance system in GTA 6. Registration is what makes a car permanent and storable. Treat insurance as unknown for now.</p></div>
+</div>
+
+<h2>The cars</h2>
+<input type="search" id="q" placeholder="Search by car, place or tool…" aria-label="Search cars">
+<div class="filters" id="filters"></div>
+<div class="cards" id="cards"></div>
+
+<h2>Quick comparison</h2>
+<div class="scroll"><table id="tbl"><thead><tr><th>Car</th><th>Class</th><th>Tracker</th><th>Needs</th><th>Earliest</th><th>Registration</th></tr></thead><tbody></tbody></table></div>
+
+<h2>Suggested order</h2>
+<div class="box"><p style="color:var(--text)">
+1. <b>Free roam start:</b> grab the Penumbra FF on Vespucci Island and keep it safe.<br>
+2. <b>Chapter 2, after Moses:</b> spend the free registration on the most valuable tracker-free car you have (the Penumbra FF is the usual pick).<br>
+3. <b>Chapter 3:</b> Pay 'n' Spray opens for standard-tracker cars; do the Chatfield robbery for the Purple Drank Emerus.<br>
+4. <b>Mid Chapter 3:</b> after <i>Clonin' Keys, Makin' Gs</i> you have the Key Cloner, which opens the Infernus, Vitello, Furia, Tempesta and Itali RSX.
+</p></div>
+
+<h2>Sources</h2>
+<ul class="src">
+  <li><a href="https://game8.co/games/GTA-6/archives/638094">Game8 — Vehicle Trackers Explained</a></li>
+  <li><a href="https://www.gamespot.com/articles/how-to-steal-cars-and-remove-trackers-in-gta-6/">GameSpot — Steal cars and remove trackers</a></li>
+  <li><a href="https://www.forbes.com/sites/paultassi/2026/11/19/where-to-get-the-car-key-cloner-in-gta-6/">Forbes — Where to get the Key Cloner</a></li>
+  <li><a href="https://rarethief.com/how-to-register-a-car-in-gta-vi/">Rare Thief — How to register a car</a></li>
+  <li><a href="https://outputlag.com/guides/gta-6-keep-register-cars/">OutputLag — Keep and register stolen cars</a></li>
+  <li><a href="https://www.pushsquare.com/guides/gta-6-randys-wish-list-vehicle-locations">Push Square — Randy's Wish List locations</a></li>
+  <li><a href="https://game8.co/games/GTA-6/archives/639137">Game8 — Randy's Wishlist locations</a></li>
+  <li><a href="https://www.destructoid.com/all-randys-wishlist-car-locations-in-gta-6/">Destructoid — Randy's Wishlist cars</a></li>
+  <li><a href="https://game8.co/games/GTA-6/archives/639160">Game8 — Purple Drank Emerus</a></li>
+  <li><a href="https://gamerant.com/gta-6-chatfield-storage-logistics-safe-code-key-valuable/">Game Rant — Chatfield Storage &amp; Logistics</a></li>
+  <li><a href="https://retrobroker.com/en-US/us/blog/fastest-free-supercars-vice-city-locations">RetroBroker — Fastest free supercars</a></li>
+  <li><a href="https://ggwtb.com/blog/gta-6-rare-cars-guide-free-locations--registration-costs-pro-routes">GGWTB — Rare cars guide</a></li>
+  <li><a href="https://www.gamesradar.com/games/grand-theft-auto/gta-6-paul-walker-fast-and-furious-car/">GamesRadar — Paul Walker car</a></li>
+  <li><a href="https://bo3.gg/games/articles/gta-6-paul-walker-car-location-how-to-get-the-green-penumbra-ff">bo3.gg — Green Penumbra FF</a></li>
+  <li><a href="https://www.hotcars.com/fast-furious-car-hiding-gta-6-garage/">HotCars — Fast &amp; Furious easter egg</a></li>
+  <li><a href="https://www.gtaboom.com/gta-6-starfish-island-mansion-garage-4cf3">GTA BOOM — Starfish Island garage</a></li>
+  <li><a href="https://www.sportskeeda.com/gta/all-gta-6-standout-vehicles-unique-cars">Sportskeeda — Standout vehicles</a></li>
+  <li><a href="https://www.sportskeeda.com/esports/7-best-early-game-cars-gta-6-get">Sportskeeda — Best early cars</a></li>
+  <li><a href="https://game8.co/games/GTA-6/archives/639138">Game8 — Best car to take to Moses</a></li>
+  <li><a href="https://www.gtabase.com/gta-6/map/?feature=standout-vehicle">GTABase — Standout vehicle map (116)</a></li>
+  <li><a href="https://showgamer.com/en/guides/8036-samye-redkie-mashiny-v-gta-6-gde-nayti-i-kak-poluchit-unikalnye-avto">ShowGamer — Rarest cars</a></li>
+</ul>
+
+<footer>Unofficial fan-compiled reference. Gathered from search summaries of the guides above; the guide pages themselves could not be opened directly, so nothing here was checked in-game. GTABase lists 116 standout vehicles in total — this dossier covers the ones guides have documented with a location so far.</footer>
+</div>
+
+<script>
+const CARS = [
+ {n:"Maibatsu '97 Penumbra FF", sub:"The Paul Walker tribute (1995 Mitsubishi Eclipse, Fast & Furious)", g:"other", cls:"Tuner / Sports", tr:"none",
+  where:"Villa garage on Vespucci Island, Rialto Islands, Vice City",
+  how:"Go in through the small door beside the garage door, switch off the alarm panel on the wall to your left, open the shutter, hotwire, drive out.",
+  need:"Nothing special", ch:"Start of free roam", reg:"$6,750, or free as your first Moses registration",
+  perks:"Unique green-and-blue livery. Speed 7.2 / acceleration 7.6 (one guide). A second movie reference (Toy Story) is in the trunk.",
+  conf:["solid","Location and method agree across many guides. Tracker-free status is implied by the Moses advice, not stated outright: scan it. Not the fastest car in the game despite some video titles."]},
+ {n:"Progen Emerus “Purple Drank”", sub:"McLaren Senna style", g:"super", cls:"Super", tr:"none",
+  where:"Chatfield Storage & Logistics, west side of Waxman Island (north of the Waxman Island Pay 'n' Spray). Inside a shipping container, sometimes parked in front.",
+  how:"It is one of three Key Valuables in the Chatfield illegal-operation robbery. Clear the site and drive it out.",
+  need:"Complete the robbery", ch:"Chapter 3", reg:"$28,000–$30,000 reported",
+  perks:"Resale about $33,000. Reported as the only Emerus with nitrous fitted.",
+  conf:["single","Location is well supported. “No tracker” and nitrous come from a single guide."]},
+ {n:"Pegassi Infernus", sub:"Lamborghini style", g:"super", cls:"Super", tr:"unknown",
+  where:"Level 7 of the police parking garage on NW 9th St (Vice-Dale PD)",
+  how:"Slip in when the gate opens, clone the key, leave via the rooftop stunt jump.",
+  need:"Key Cloner", ch:"Mid Chapter 3", reg:"Not reported",
+  perks:"On Randy's Wish List. A gold “Rope” Infernus standout also exists (registration $34,750, sells for $9,200), location not documented.",
+  conf:["solid","Location agrees across guides (one writes NE 9th St). Tracker type not stated; expect advanced."]},
+ {n:"Pegassi '96 Infernus", sub:"Classic Infernus", g:"super", cls:"Super (classic)", tr:"unknown",
+  where:"Garage of a white house in Capri",
+  how:"Reported as a daytime spawn; open the garage and take it.",
+  need:"Probably slim jim", ch:"Not reported", reg:"Not reported", perks:"On Randy's Wish List.",
+  conf:["single","One guide only."]},
+ {n:"Pegassi Vitello", sub:"Modern Pegassi hypercar", g:"super", cls:"Super", tr:"advanced",
+  where:"Villa on Flamingo Pkwy, Waning Sands, east of Belville. Facing the entrance, the garage on the right nearest the house.",
+  how:"Clone the key and drive off fast: the advanced tracker pings police when you slow down.",
+  need:"Key Cloner", ch:"Mid Chapter 3", reg:"$43,750 (one guide)", perks:"On Randy's Wish List.",
+  conf:["conflict","Flamingo Pkwy is backed by several guides. The price comes from a guide that puts the car in a Starfish Island mansion garage instead."]},
+ {n:"Piccia Furia", sub:"Italian hypercar", g:"super", cls:"Super", tr:"advanced",
+  where:"Yellow villa with detached garage on Palladia Ln, Peacock Estates, Peacock Bay. A second one is reported parked outside a white mansion in northern Capri.",
+  how:"Clone the key at the mansion garage.",
+  need:"Key Cloner", ch:"Mid Chapter 3", reg:"$66,250 for the “Big Cat” Furia variant", perks:"On Randy's Wish List. “Big Cat” is a standout livery.",
+  conf:["conflict","Guides differ on garage vs. front steps, and the price is for the Big Cat variant, which may not be the Palladia Ln car."]},
+ {n:"Pegassi Tempesta", sub:"Lamborghini style", g:"super", cls:"Super", tr:"unknown",
+  where:"NE 3rd St, Vice City (repossession random encounter). Also reported parked in front of the Eden Grove Marina Hotels. A gold “Gold Rush” variant is listed at Vice Beach.",
+  how:"Release it from the tow truck during the repossession encounter, or clone the key on a parked one.",
+  need:"Key Cloner for parked ones", ch:"Mid Chapter 3", reg:"About $9,000 (one guide)", perks:"Gold Rush standout has gold-chrome paint.",
+  conf:["conflict","Three different spots across guides; all may be valid spawns."]},
+ {n:"Grotti Itali RSX", sub:"Ferrari style", g:"super", cls:"Super", tr:"unknown",
+  where:"House garage in the Vespucci Islands. Also reported in a Starfish Island mansion garage beside the driveway turnaround.",
+  how:"Clone the key at the garage.",
+  need:"Key Cloner", ch:"Mid Chapter 3", reg:"Not reported", perks:"Described as the fastest car on Randy's Wish List.",
+  conf:["single","The Starfish Island guide says it did not test opening the garage or registering the cars."]},
+ {n:"Granforma Zorrusso", sub:"Story supercar", g:"super", cls:"Super", tr:"advanced",
+  where:"Hathaway Apartments, Vice City",
+  how:"Stolen during the mission Clonin' Keys, Makin' Gs and delivered to Randy's showroom, where the tracker switches off.",
+  need:"Story mission", ch:"Mid Chapter 3", reg:"Delivered to Randy, not kept", perks:"This mission unlocks the Key Cloner.",
+  conf:["solid","You drive it for free but guides do not describe keeping this one."]},
+ {n:"Grotti Cheetah '95", sub:"Testarossa-era classic", g:"super", cls:"Super (classic)", tr:"unknown",
+  where:"Luxury hotels on Ocean Beach (one guide)",
+  how:"Free to register if you own the Ultimate Edition; otherwise steal one.",
+  need:"Ultimate Edition for the freebie", ch:"Early", reg:"Free with Ultimate Edition", perks:"Edition bonus car.",
+  conf:["single","Hotel spawn is from one guide."]},
+ {n:"Truffade Thrax", sub:"Bugatti style", g:"super", cls:"Super", tr:"unknown",
+  where:"No world spawn documented",
+  how:"Listed as a spawn-cheat reward for finishing all shopping challenges.",
+  need:"All shopping challenges", ch:"Late", reg:"Not reported", perks:"Costs no money, but it is earned rather than stolen.",
+  conf:["single","One guide only."]},
+ {n:"Progen Emerus “Seaspray” / “Royal Ruby”", sub:"Other Emerus standouts", g:"super", cls:"Super", tr:"unknown",
+  where:"Both exist as standout vehicles; exact spots are on the Game8 and GTABase maps, not captured here",
+  how:"Check the standout map, scan with WAiNK.",
+  need:"Likely Key Cloner", ch:"Chapter 3+", reg:"A plain Emerus is quoted at about $10,000", perks:"Exclusive paint.",
+  conf:["single","Existence confirmed, locations not confirmed here."]},
+ {n:"Bravado Gauntlet Hellfire", sub:"Hellcat style", g:"other", cls:"Muscle", tr:"unknown",
+  where:"M7 junkyard off Galerina Street, east of Boone Speedway",
+  how:"Parked; take it.", need:"Not reported", ch:"Not reported", reg:"Not reported", perks:"Top-tier muscle.",
+  conf:["single","One guide."]},
+ {n:"Vapid Red Hot Hustler", sub:"Hot rod", g:"other", cls:"Classic / Hot rod", tr:"unknown",
+  where:"Corner of the La Costa Hotel parking lot, Capri coast",
+  how:"Parked; take it.", need:"Not reported", ch:"Not reported", reg:"Not reported", perks:"Standout look.",
+  conf:["single","One guide."]},
+ {n:"Turbo Ruiner", sub:"80s turbo coupe", g:"other", cls:"Sports classic", tr:"unknown",
+  where:"House east of the Key Lento home",
+  how:"No alarm; daytime spawn.", need:"Nothing special", ch:"Early", reg:"Not reported", perks:"Easy early pickup near Jason's place.",
+  conf:["single","One guide."]},
+ {n:"Skyline-style Elegy", sub:"Guarded mansion car", g:"other", cls:"Tuner / Sports", tr:"none",
+  where:"Guarded mansion on Starfish Island",
+  how:"Get past the guards and take it.", need:"Not reported", ch:"Not reported", reg:"Not reported", perks:"Reported tracker-free, so Moses-eligible.",
+  conf:["single","One guide, and it differs from another guide's car list for the same garage."]},
+ {n:"Grotti Carbonizzare · Invetero Coquette D10 · Coil Raiden", sub:"Fast street traffic", g:"other", cls:"Sports", tr:"unknown",
+  where:"Vice City streets and parked in wealthy districts",
+  how:"Carjack or steal parked (parked ones are often key-locked).", need:"Varies", ch:"Early", reg:"Roughly $4,000–$10,000", perks:"The fastest things you can get early without tools.",
+  conf:["conflict","Guides disagree on whether the Coquette D10 has a tracker."]},
+ {n:"Karin Sultan · Dinka Sabre Turbo", sub:"Easy keepers", g:"other", cls:"Sports / Muscle", tr:"none",
+  where:"Common traffic", how:"Steal and take to Moses.", need:"Nothing special", ch:"Chapter 2", reg:"Low", perks:"Good getaway cars.",
+  conf:["single","Named by one tier list as Moses-eligible."]},
+ {n:"Vapid '70 Ganado", sub:"Jason's own car", g:"other", cls:"Muscle (starter)", tr:"none",
+  where:"Outside Jason's house, Key Lento",
+  how:"Yours from the start. Call Joey to have it delivered and repaired for free.", need:"Nothing", ch:"Start", reg:"Already yours", perks:"Trunk holds long guns and outfits.",
+  conf:["solid","Starter vehicle."]},
+ {n:"Vapid '55 Stanier", sub:"Pre-order bonus", g:"other", cls:"Classic", tr:"none",
+  where:"Delivered as a bonus", how:"Pre-order bonus.", need:"Pre-order", ch:"Start", reg:"Already yours", perks:"Bullet-resistant door panels.",
+  conf:["solid","Edition bonus."]}
+];
+const TL={none:"NO TRACKER",standard:"STANDARD",advanced:"ADVANCED",unknown:"TRACKER UNKNOWN"};
+const CL={solid:"● Well supported",single:"● Thin sourcing",conflict:"● Guides disagree"};
+const FILTERS=[["all","All"],["super","Supercars"],["other","Other free cars"],["none","No tracker"],["advanced","Advanced tracker"],["nocloner","No Key Cloner needed"]];
+let cur="all";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fEl=document.getElementById("filters"),cEl=document.getElementById("cards"),q=document.getElementById("q");
+FILTERS.forEach(([k,l])=>{const b=document.createElement("button");b.textContent=l;b.dataset.k=k;if(k==="all")b.className="on";
+  b.onclick=()=>{cur=k;[...fEl.children].forEach(x=>x.classList.toggle("on",x===b));draw()};fEl.appendChild(b)});
+function match(c){
+  if(cur==="super"||cur==="other"){if(c.g!==cur)return false}
+  else if(cur==="none"||cur==="advanced"){if(c.tr!==cur)return false}
+  else if(cur==="nocloner"){if(/cloner/i.test(c.need))return false}
+  const t=q.value.trim().toLowerCase();
+  return !t||Object.values(c).join(" ").toLowerCase().includes(t);
+}
+function draw(){
+  const list=CARS.filter(match);
+  cEl.innerHTML=list.map(c=>`<article class="card ${c.g}">
+    <div><h3>${esc(c.n)}</h3><div class="sub">${esc(c.sub)}</div></div>
+    <div class="tags"><span class="pill t-${c.tr}">${TL[c.tr]}</span><span class="tag">${esc(c.cls)}</span><span class="tag">${esc(c.ch)}</span></div>
+    <dl><dt>Where</dt><dd>${esc(c.where)}</dd><dt>How</dt><dd>${esc(c.how)}</dd><dt>Needs</dt><dd>${esc(c.need)}</dd>
+    <dt>Register</dt><dd>${esc(c.reg)}</dd><dt>Extras</dt><dd>${esc(c.perks)}</dd></dl>
+    <div class="conf"><b class="c-${c.conf[0]}">${CL[c.conf[0]]}</b> — ${esc(c.conf[1])}</div></article>`).join("")
+    ||'<p class="sub">No cars match.</p>';
+}
+q.oninput=draw;draw();
+document.querySelector("#tbl tbody").innerHTML=CARS.map(c=>`<tr><td><b>${esc(c.n)}</b></td><td>${esc(c.cls)}</td><td><span class="pill t-${c.tr}">${TL[c.tr]}</span></td><td>${esc(c.need)}</td><td>${esc(c.ch)}</td><td>${esc(c.reg)}</td></tr>`).join("");
+</script>
+</body>
+</html>
