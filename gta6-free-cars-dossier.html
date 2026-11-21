@@ -50,6 +50,24 @@
   .scroll{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px}
   a{color:var(--cyan)} ul.src{padding-left:18px;color:var(--muted);font-size:13.5px;columns:2;column-gap:30px}
   @media(max-width:640px){ul.src{columns:1}}
+  .art{display:block;width:calc(100% + 32px);margin:-16px -16px 2px;border-radius:9px 9px 0 0;aspect-ratio:8/3;height:auto}
+  .sell{color:var(--green);font-weight:600}
+  .photos{font-size:13px;text-decoration:none;padding:6px 0}
+  .cards{grid-template-columns:repeat(auto-fill,minmax(min(100%,310px),1fr))}
+  .card{overflow:hidden;min-width:0} dd{overflow-wrap:anywhere}
+  @media(max-width:640px){
+    body{font-size:16px}
+    .wrap{padding:18px 12px 48px}
+    h2{margin-top:28px}
+    input[type=search]{font-size:16px;padding:12px}
+    .filters{flex-wrap:nowrap;overflow-x:auto;margin:12px -12px;padding:0 12px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .filters button{flex:0 0 auto;padding:10px 14px;font-size:14px}
+    dl{grid-template-columns:1fr;gap:0}
+    dt{margin-top:8px}
+    dl dt:first-child{margin-top:0}
+    th,td{padding:8px;font-size:13px;min-width:110px}
+    .photos{padding:10px 0}
+  }
   footer{margin-top:40px;color:var(--grey);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px}
 </style>
 </head>
@@ -78,13 +96,21 @@
   <div class="box"><h3>Insurance</h3><p>I found no guide describing an insurance system in GTA 6. Registration is what makes a car permanent and storable. Treat insurance as unknown for now.</p></div>
 </div>
 
+<h2>Where to sell and what they pay</h2>
+<div class="grid3">
+  <div class="box"><h3>Moses <span class="pill t-none">NO TRACKER</span></h3><p>About <b>$1,000–$2,000</b> per ordinary car. Port Gellhorn, from Chapter 2.</p></div>
+  <div class="box"><h3>Pay 'n' Spray <span class="pill t-standard">STANDARD</span></h3><p>About <b>$2,500–$4,000</b> for a good car (guides differ). Buys only <b>three stolen cars per in-game day</b>. From Chapter 3.</p></div>
+  <div class="box"><h3>Randy <span class="pill t-advanced">ADVANCED</span></h3><p><b>$30,000–$35,000</b> for a supercar on his Wish List, delivered clean. Damage lowers every payout.</p></div>
+</div>
+<p class="sub" style="margin-top:10px">Sell values are WAiNK scan figures collected by fan sites in launch week. Registering usually costs more than the car sells for, so decide whether a car is a keeper or a sale before paying.</p>
+
 <h2>The cars</h2>
 <input type="search" id="q" placeholder="Search by car, place or tool…" aria-label="Search cars">
 <div class="filters" id="filters"></div>
 <div class="cards" id="cards"></div>
 
 <h2>Quick comparison</h2>
-<div class="scroll"><table id="tbl"><thead><tr><th>Car</th><th>Class</th><th>Tracker</th><th>Needs</th><th>Earliest</th><th>Registration</th></tr></thead><tbody></tbody></table></div>
+<div class="scroll"><table id="tbl"><thead><tr><th>Car</th><th>Class</th><th>Tracker</th><th>Needs</th><th>Earliest</th><th>Registration</th><th>Sells for</th></tr></thead><tbody></tbody></table></div>
 
 <h2>Suggested order</h2>
 <div class="box"><p style="color:var(--text)">
@@ -115,11 +141,15 @@
   <li><a href="https://www.sportskeeda.com/gta/all-gta-6-standout-vehicles-unique-cars">Sportskeeda — Standout vehicles</a></li>
   <li><a href="https://www.sportskeeda.com/esports/7-best-early-game-cars-gta-6-get">Sportskeeda — Best early cars</a></li>
   <li><a href="https://game8.co/games/GTA-6/archives/639138">Game8 — Best car to take to Moses</a></li>
+  <li><a href="https://www.gtabase.com/articles/gta-6/most-expensive-vehicles-to-steal-and-sell-in-gta-6">GTABase — Most expensive vehicles to steal and sell</a></li>
+  <li><a href="https://timesaver.gg/tools/gta-6/money/randy-wish-list">TimeSaver — Randy's Wish List payout</a></li>
+  <li><a href="https://gta6resell.com/prices">GTA6Resell — Sell prices</a></li>
+  <li><a href="https://egamers.io/gta-6-randys-wish-list-every-car-and-how-to-earn-supply-demand/">EGamers — Randy's Wish List</a></li>
   <li><a href="https://www.gtabase.com/gta-6/map/?feature=standout-vehicle">GTABase — Standout vehicle map (116)</a></li>
   <li><a href="https://showgamer.com/en/guides/8036-samye-redkie-mashiny-v-gta-6-gde-nayti-i-kak-poluchit-unikalnye-avto">ShowGamer — Rarest cars</a></li>
 </ul>
 
-<footer>Unofficial fan-compiled reference. Gathered from search summaries of the guides above; the guide pages themselves could not be opened directly, so nothing here was checked in-game. GTABase lists 116 standout vehicles in total — this dossier covers the ones guides have documented with a location so far.</footer>
+<footer>Unofficial fan-compiled reference. Car pictures are drawn illustrations in each car's reported colour, not game screenshots; the link on each card opens real ones. Gathered from search summaries of the guides above; the guide pages themselves could not be opened directly, so nothing here was checked in-game. GTABase lists 116 standout vehicles in total — this dossier covers the ones guides have documented with a location so far.</footer>
 </div>
 
 <script>
@@ -145,8 +175,8 @@ const CARS = [
  {n:"Pegassi '96 Infernus", sub:"Classic Infernus", g:"super", cls:"Super (classic)", tr:"unknown",
   where:"Garage of a white house in Capri",
   how:"Reported as a daytime spawn; open the garage and take it.",
-  need:"Probably slim jim", ch:"Not reported", reg:"Not reported", perks:"On Randy's Wish List.",
-  conf:["single","One guide only."]},
+  need:"Probably slim jim", ch:"Not reported", reg:"$34,750", perks:"On Randy's Wish List.",
+  conf:["single","Location from one guide; prices from GTABase scan data."]},
  {n:"Pegassi Vitello", sub:"Modern Pegassi hypercar", g:"super", cls:"Super", tr:"advanced",
   where:"Villa on Flamingo Pkwy, Waning Sands, east of Belville. Facing the entrance, the garage on the right nearest the house.",
   how:"Clone the key and drive off fast: the advanced tracker pings police when you slow down.",
@@ -218,6 +248,49 @@ const CARS = [
   where:"Delivered as a bonus", how:"Pre-order bonus.", need:"Pre-order", ch:"Start", reg:"Already yours", perks:"Bullet-resistant door panels.",
   conf:["solid","Edition bonus."]}
 ];
+// Per car, same order as CARS: [body shape, paint, accent, sell value]
+const EXTRA=[
+ ["tuner","#6fdc3c","#2f7fe0","Not reported. It is a keeper, not a seller."],
+ ["super","#8b3fd9","#e9d5ff","About $33,000"],
+ ["super","#ff8a1f","#1a1a1a","$30,000–$35,000 to Randy in clean condition"],
+ ["wedge","#e02d2d","#1a1a1a","$17,160 scan value, the highest documented so far"],
+ ["super","#19c2a0","#0b3b33","$30,000+ to Randy in clean condition"],
+ ["super","#f5d400","#1a1a1a","$30,000+ to Randy in clean condition"],
+ ["super","#d4a72c","#fff3c4","$30,000+ to Randy if it is on his list"],
+ ["super","#d81e2c","#1a1a1a","$30,000+ to Randy in clean condition"],
+ ["super","#e9e9ee","#ff4fa3","$21,250 base + $10,000 clean-condition bonus (one guide)"],
+ ["wedge","#f5f5f5","#1a1a1a","$16,775 scan value"],
+ ["super","#2b4bd6","#111827","Not reported"],
+ ["super","#3ad0c0","#b91c4a","$20,000+ at a specialist fence (plain Emerus)"],
+ ["muscle","#c21f1f","#111111","Not reported. A Gauntlet Custom '69 scans at $7,095."],
+ ["hotrod","#e03a1a","#ffb020","Not reported. A plain Hustler '32 scans at $6,545."],
+ ["wedge","#4b6bd8","#111827","Not reported"],
+ ["tuner","#3f6fe0","#e5e7eb","Not reported"],
+ ["wedge","#e0262b","#111111","Carbonizzare scans at $14,150. Others not reported."],
+ ["sedan","#7a8cff","#111827","About $1,000–$2,000 each at Moses"],
+ ["muscle","#c9732a","#3b1d08","Your own car, not sold"],
+ ["sedan","#6fb8c9","#f8fafc","Your own car, not sold"]
+];
+const BODY={
+ super:["M10 88 L40 70 L110 52 Q150 38 200 44 L262 62 L304 72 Q312 76 310 88 Z","M118 57 Q150 45 196 49 L226 62 L112 64 Z"],
+ wedge:["M10 88 L22 70 L96 62 L130 42 L210 42 L250 62 L306 68 L310 88 Z","M135 47 L206 47 L236 62 L106 62 Z"],
+ tuner:["M12 88 L16 68 L80 60 L118 38 L212 38 L252 58 L300 62 L308 88 Z","M123 43 L208 43 L238 58 L92 60 Z"],
+ muscle:["M8 88 L10 62 L92 58 L120 38 L214 38 L240 58 L308 62 L312 88 Z","M125 43 L210 43 L228 58 L104 58 Z"],
+ hotrod:["M40 88 L44 60 L120 60 L130 36 L190 36 L196 60 L290 66 L300 88 Z","M136 41 L185 41 L189 58 L130 58 Z"],
+ sedan:["M8 88 L10 64 Q12 58 60 56 L96 34 L210 34 L236 56 L300 60 Q312 64 310 88 Z","M102 39 L206 39 L226 56 L76 56 Z"]
+};
+function art(i,name){
+  const [shape,paint,accent]=EXTRA[i],[body,glass]=BODY[shape],hr=shape==="hotrod";
+  const wheel=(x,r)=>`<circle cx="${x}" cy="${96-r+8}" r="${r}" fill="#0b0910"/><circle cx="${x}" cy="${96-r+8}" r="${r*.5}" fill="#9a93aa"/>`;
+  const spoiler=shape==="tuner"?`<path d="M14 50 h36 v5 h-13 v11 h-6 v-11 h-17 Z" fill="${paint}"/>`:"";
+  return `<svg class="art" viewBox="0 0 320 120" role="img" aria-label="Illustration of ${esc(name)}">
+   <defs><linearGradient id="sky${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1746"/><stop offset=".7" stop-color="#7b2a6b"/><stop offset="1" stop-color="#ff7a59"/></linearGradient></defs>
+   <rect width="320" height="120" fill="url(#sky${i})"/><circle cx="250" cy="74" r="30" fill="#ffd27a" opacity=".55"/>
+   <rect y="100" width="320" height="20" fill="#120e1c"/>
+   ${spoiler}<path d="${body}" fill="${paint}"/><path d="${glass}" fill="#0f1422" opacity=".85"/>
+   <path d="M30 76 H296" stroke="${accent}" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+   ${wheel(hr?84:78,hr?23:17)}${wheel(hr?262:246,hr?14:17)}</svg>`;
+}
 const TL={none:"NO TRACKER",standard:"STANDARD",advanced:"ADVANCED",unknown:"TRACKER UNKNOWN"};
 const CL={solid:"● Well supported",single:"● Thin sourcing",conflict:"● Guides disagree"};
 const FILTERS=[["all","All"],["super","Supercars"],["other","Other free cars"],["none","No tracker"],["advanced","Advanced tracker"],["nocloner","No Key Cloner needed"]];
@@ -235,16 +308,18 @@ function match(c){
 }
 function draw(){
   const list=CARS.filter(match);
-  cEl.innerHTML=list.map(c=>`<article class="card ${c.g}">
+  cEl.innerHTML=list.map(c=>{const i=CARS.indexOf(c);return `<article class="card ${c.g}">
+    ${art(i,c.n)}
     <div><h3>${esc(c.n)}</h3><div class="sub">${esc(c.sub)}</div></div>
     <div class="tags"><span class="pill t-${c.tr}">${TL[c.tr]}</span><span class="tag">${esc(c.cls)}</span><span class="tag">${esc(c.ch)}</span></div>
     <dl><dt>Where</dt><dd>${esc(c.where)}</dd><dt>How</dt><dd>${esc(c.how)}</dd><dt>Needs</dt><dd>${esc(c.need)}</dd>
-    <dt>Register</dt><dd>${esc(c.reg)}</dd><dt>Extras</dt><dd>${esc(c.perks)}</dd></dl>
-    <div class="conf"><b class="c-${c.conf[0]}">${CL[c.conf[0]]}</b> — ${esc(c.conf[1])}</div></article>`).join("")
+    <dt>Register</dt><dd>${esc(c.reg)}</dd><dt>Sells for</dt><dd class="sell">${esc(EXTRA[i][3])}</dd><dt>Extras</dt><dd>${esc(c.perks)}</dd></dl>
+    <a class="photos" target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent("GTA 6 "+c.n)}">See real screenshots ↗</a>
+    <div class="conf"><b class="c-${c.conf[0]}">${CL[c.conf[0]]}</b> — ${esc(c.conf[1])}</div></article>`}).join("")
     ||'<p class="sub">No cars match.</p>';
 }
 q.oninput=draw;draw();
-document.querySelector("#tbl tbody").innerHTML=CARS.map(c=>`<tr><td><b>${esc(c.n)}</b></td><td>${esc(c.cls)}</td><td><span class="pill t-${c.tr}">${TL[c.tr]}</span></td><td>${esc(c.need)}</td><td>${esc(c.ch)}</td><td>${esc(c.reg)}</td></tr>`).join("");
+document.querySelector("#tbl tbody").innerHTML=CARS.map((c,i)=>`<tr><td><b>${esc(c.n)}</b></td><td>${esc(c.cls)}</td><td><span class="pill t-${c.tr}">${TL[c.tr]}</span></td><td>${esc(c.need)}</td><td>${esc(c.ch)}</td><td>${esc(c.reg)}</td><td>${esc(EXTRA[i][3])}</td></tr>`).join("");
 </script>
 </body>
 </html>
